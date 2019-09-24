@@ -3,7 +3,8 @@ const crypto = require("crypto");
 // const argon2 = require("argon2");
 const argon2 = require("argon2-wasm");
 
-const edPro = require("ed25519-wasm-pro");
+// const edPro = require("ed25519-wasm-pro");
+const ed25519 = require("ed25519.js");
 
 const bs58check = require("bs58check");
 
@@ -48,22 +49,26 @@ async function createAccount(password, COSTNUM) {
         let promise = new Promise(function (resolve, reject) {
             try {
                 // 生成公钥
-                edPro.ready(function () {
-                    const keypair = edPro.createKeyPair(privateKey)
-                    let publicKey = Buffer.from(keypair.publicKey.buffer);
+                // edPro.ready(function () {
+                //     const keypair = edPro.createKeyPair(privateKey)
+                //     let publicKey = Buffer.from(keypair.publicKey.buffer);
+                // })
 
-                    //clear privateKey for security, any better methed?
-                    crypto.randomFillSync(Buffer.from(derivePwd.hash.buffer));
-                    crypto.randomFillSync(privateKey);
+                let keypair = ed25519.createKeyPair(privateKey);
+                let publicKey = keypair.publicKey;
 
-                    let accFile = {
-                        account: encode_account(publicKey),
-                        kdf_salt: kdf_salt.toString('hex').toUpperCase(),
-                        iv: iv.toString('hex').toUpperCase(),
-                        ciphertext: ciphertext.toString('hex').toUpperCase()
-                    }
-                    resolve(accFile)
-                })
+                //clear privateKey for security, any better methed?
+                crypto.randomFillSync(Buffer.from(derivePwd.hash.buffer));
+                crypto.randomFillSync(privateKey);
+
+                let accFile = {
+                    account: encode_account(publicKey),
+                    kdf_salt: kdf_salt.toString('hex').toUpperCase(),
+                    iv: iv.toString('hex').toUpperCase(),
+                    ciphertext: ciphertext.toString('hex').toUpperCase()
+                }
+                resolve(accFile)
+
             } catch (e) {
                 reject(e)
             }
@@ -109,14 +114,21 @@ async function decryptAccount(keystore, password, COSTNUM) {
 function signBlock(block, privateKey) {
     let promise = new Promise(function (resolve, reject) {
         try {
-            edPro.ready(function () {
-                block = Buffer.from(block, "hex");
-                privateKey = Buffer.from(privateKey, "hex");
-                const keys = edPro.createKeyPair(privateKey)
-                let signature = edPro.sign(block, keys.publicKey, keys.secretKey)
-                let result = Buffer.from(signature.buffer).toString('hex').toUpperCase();
-                resolve(result);
-            })
+            // edPro.ready(function () {
+            //     block = Buffer.from(block, "hex");
+            //     privateKey = Buffer.from(privateKey, "hex");
+            //     const keys = edPro.createKeyPair(privateKey)
+            //     let signature = edPro.sign(block, keys.publicKey, keys.secretKey)
+            //     let result = Buffer.from(signature.buffer).toString('hex').toUpperCase();
+            //     resolve(result);
+            // })
+            block = Buffer.from(block, "hex");
+            privateKey = Buffer.from(privateKey, "hex");
+            var publicKey = ed25519.derivePublicKey(privateKey)
+            var signature = ed25519.sign(block, publicKey, privateKey)
+
+            return signature.toString('hex').toUpperCase();
+
         } catch (e) {
             reject(e)
         }
@@ -128,15 +140,23 @@ async function validateAccount(keystore, password, COSTNUM) {
     let prv1 = await decryptAccount(keystore, password, COSTNUM);
     let promise = new Promise(function (resolve, reject) {
         try {
-            edPro.ready(function () {
-                const keypair = edPro.createKeyPair(Buffer.from(prv1, "hex"))
-                let compare = Buffer.from(keypair.publicKey.buffer);
-                if (encode_account(compare) === keystore.account) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            })
+            // edPro.ready(function () {
+            //     const keypair = edPro.createKeyPair(Buffer.from(prv1, "hex"))
+            //     let compare = Buffer.from(keypair.publicKey.buffer);
+            //     if (encode_account(compare) === keystore.account) {
+            //         resolve(true);
+            //     } else {
+            //         resolve(false);
+            //     }
+            // })
+            var publicKey = ed25519.derivePublicKey(Buffer.from(prv1, "hex"))
+            if (encode_account(publicKey) === keystore.account) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+
+
         } catch (e) {
             reject(e)
         }
@@ -213,7 +233,7 @@ Accounts.prototype.decrypt = async function (keystore, password) {
 * return: signature
 * */
 Accounts.prototype.sign = async function (block, privateKey) {
-    return await signBlock(block, privateKey);
+    return signBlock(block, privateKey)
 
 };
 

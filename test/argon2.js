@@ -1,7 +1,7 @@
 const argon2 = require("argon2-wasm");
 const crypto = require("crypto");
-const edPro = require("ed25519-wasm-pro");
-// const ed25519 = require("ed25519");
+// const edPro = require("ed25519-wasm-pro");
+const ed25519 = require("ed25519.js");
 const bs58check = require("bs58check");
 
 // let kdf_salt    = crypto.randomBytes(16);
@@ -18,10 +18,10 @@ async function createAccount(opts, iv, privateKey) {
     opts.parallelism = opts.parallelism || 1;
     opts.hashLen = opts.hashLen || 32;
 
-    console.log(opts);
+    // console.log(opts);
     let derive_pwd = await argon2.hash(opts)
     let derive_pwd_val = derive_pwd.hashHex.toUpperCase();
-    console.log(derive_pwd.hashHex.toString());
+    // console.log(derive_pwd.hashHex.toString());
     //加密私钥，加密方法aes-256-ctr
     let cipher = crypto.createCipheriv("aes-256-ctr", Buffer.from(derive_pwd.hash.buffer), iv);
     let ciphertext = Buffer.concat([cipher.update(privateKey), cipher.final()]);
@@ -30,33 +30,35 @@ async function createAccount(opts, iv, privateKey) {
 
     let promise = new Promise(function (resolve, reject) {
         try {
-            edPro.ready(function () {
-                // let keypair = ed25519.MakeKeypair(privateKey);
-                // let pub = keypair.publicKey;
+            // edPro.ready(function () {
+            //     const keys = edPro.createKeyPair(privateKey)
+            //     // console.log("new ed", Buffer.from(keys.publicKey.buffer))
+            //     let pubB = Buffer.from(keys.publicKey.buffer);
+            // })
 
-                const keys = edPro.createKeyPair(privateKey)
-                // console.log("new ed", Buffer.from(keys.publicKey.buffer))
-                let pub = Buffer.from(keys.publicKey.buffer);
-                const kc = {
-                    pub: pub,
-                    kdf_salt: opts.salt,
-                    iv: iv,
-                    ciphertext: ciphertext
+            let keypair = ed25519.createKeyPair(privateKey);
+            let pub = keypair.publicKey;
+
+            const kc = {
+                pub: pub,
+                kdf_salt: opts.salt,
+                iv: iv,
+                ciphertext: ciphertext
+            }
+            let ciphertextVal = kc.ciphertext.toString('hex').toUpperCase();
+
+            let pubVal = kc.pub.toString('hex').toUpperCase();
+
+            let account_c = encode_account(kc.pub);
+            resolve(
+                {
+                    "derive_pwd": derive_pwd_val,
+                    "account": account_c,
+                    "ciphertext": ciphertextVal,
+                    "pub": pubVal
                 }
-                let ciphertextVal = kc.ciphertext.toString('hex').toUpperCase();
+            )
 
-                let pubVal = kc.pub.toString('hex').toUpperCase();
-
-                let account_c = encode_account(kc.pub);
-                resolve(
-                    {
-                        "derive_pwd": derive_pwd_val,
-                        "account": account_c,
-                        "ciphertext": ciphertextVal,
-                        "pub": pubVal
-                    }
-                )
-            })
         } catch (e) {
             reject(e)
         }

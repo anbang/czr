@@ -26,7 +26,7 @@ describe('Accounts', function () {
         it('should return account file', function (done) {
             czr.accounts.create('pa55word')
                 .then(accountFile => {
-                    // console.log(accountFile);
+                    console.log(accountFile);
                     expect(accountFile).not.to.be.an('error')
                     expect(accountFile).to.have.property('account')
                     expect(accountFile).to.have.property('kdf_salt')
@@ -71,12 +71,14 @@ describe('Accounts', function () {
                 signature: 'AD1E0EEBF552D40608F0D7FF43C2C85B60C2F259D2917FB37B6BC5D468147612BAB9F46FEEE6C2DC5F52C83E564E35457317DC47AFB179574178230BDF68A80E',
             }
             const sig = await czr.accounts.sign(mock.message, mock.prv)
-            // console.log(`
-            // message : ${mock.message}
-            // prv : ${mock.prv}
-            // sig ：${sig}
-            // `)
+            console.log(`
+            message : ${mock.message}
+            prv : ${mock.prv}
+            sig ：${sig}
+            `)
+
             expect(sig).to.equal(mock.signature)
+            done()
         }
         )
 

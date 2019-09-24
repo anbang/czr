@@ -14,24 +14,28 @@ let kdf_option = {
 
 
 describe('CZR:账号测试', function () {
-    describe('#derive_pwd()', function () {
-        it('derive_pwd', async () => {
-            let result = await createAccount(kdf_option, iv, privateKey);
-            expect(result.derive_pwd).to.equal("B37318E4BF5F578E824D773963C2D0FE6FA5F8A94D7DDA6D98728DBE5B5E4D17");
-        });
-    })
+    // describe('#derive_pwd()', function () {
+    //     it('derive_pwd', async () => {
+    //         let result = await createAccount(kdf_option, iv, privateKey);
+    //         expect(result.derive_pwd).to.equal("B37318E4BF5F578E824D773963C2D0FE6FA5F8A94D7DDA6D98728DBE5B5E4D17");
+    //     });
+    // })
+
     describe('#account()', function () {
         it('account', async () => {
             let result = await createAccount(kdf_option, iv, privateKey);
+            // console.log(createAccount(kdf_option, iv, privateKey))
             expect(result.account).to.equal("czr_3M3dbuG3hWoeykQroyhJssdS15Bzocyh7wryG75qUWDxoyzBca");
         });
     })
+
     describe('#ciphertext()', function () {
         it('ciphertext', async () => {
             let result = await createAccount(kdf_option, iv, privateKey);
             expect(result.ciphertext).to.equal("96D6B77BC031116919956F1904F25601C29036A9232D638536964E8ADC034360");
         });
     })
+
     describe('#pub()', function () {
         it('pub', async () => {
             let result = await createAccount(kdf_option, iv, privateKey);
