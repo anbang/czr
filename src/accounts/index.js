@@ -1,7 +1,7 @@
 "use strict";
 const crypto = require("crypto");
 // const argon2 = require("argon2");
-const argon2 = require("argon2-wasm-pro");
+const argon2 = require("argon2-wasm");
 
 const edPro = require("ed25519-wasm-pro");
 
@@ -30,7 +30,7 @@ async function createAccount(password, COSTNUM) {
     let kdf_option = {
         pass: password.toString(),
         salt: kdf_salt,
-        type: argon2.ArgonType.Argon2id,
+        type: argon2.types.Argon2id,
         time: 1,
         mem: COSTNUM,
         parallelism: 1,
@@ -83,7 +83,7 @@ async function decryptAccount(keystore, password, COSTNUM) {
     let kdf_option = {
         pass: password.toString(),
         salt: keystore.kdf_salt,
-        type: argon2.ArgonType.Argon2id,
+        type: argon2.types.Argon2id,
         time: 1,
         mem: COSTNUM,
         parallelism: 1,
