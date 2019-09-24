@@ -1,0 +1,68 @@
+{
+  "name": "czr",
+  "version": "1.1.1",
+  "description": "Canonchain JavaScript API",
+  "main": "src/index.js",
+  "apidoc": {
+    "title": "Czr.js Document",
+    "url": "https://github.com/canonchain/czr.js",
+    "name": "Czr.js Document",
+    "version": "0.1.0",
+    "description": "A basic example",
+    "sampleUrl": "",
+    "header": {
+      "title": "My own header title",
+      "filename": "header.md"
+    },
+    "footer": {
+      "title": "My own footer title",
+      "filename": "footer.md"
+    }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canonchain/czr.js.git"
+  },
+  "keywords": [
+    "Canonchain",
+    "czr",
+    "JavaScript",
+    "API"
+  ],
+  "author": {
+    "name": "canonchain.com"
+  },
+  "authors": [
+    {
+      "name": "anbang",
+      "email": "www@zhubangbang.com",
+      "homepage": "https://github.com/zhubangbang"
+    }
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "argon2-wasm": "^0.9.0",
+    "base32-encode": "^1.1.0",
+    "bignumber.js": "^7.2.1",
+    "blakejs": "^1.1.0",
+    "bn.js": "^4.11.8",
+    "bs58check": "^2.1.2",
+    "czr-solc": "^0.5.1",
+    "ed25519-wasm-pro": "^1.0.0",
+    "js-sha3": "^0.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/canonchain/czr.js/issues"
+  },
+  "homepage": "https://github.com/canonchain/czr.js#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}
