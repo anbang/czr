@@ -47,7 +47,7 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "argon2-wasm": "^0.9.0",
+    "argon2-wasm-pro": "git@github.com:canonchain/argon2-wasm.git",
     "base32-encode": "^1.1.0",
     "bignumber.js": "^7.2.1",
     "blakejs": "^1.1.0",
