@@ -1,7 +1,7 @@
 "use strict";
 const crypto = require("crypto");
 // const argon2 = require("argon2");
-const argon2 = require("argon2-wasm-pron");
+const argon2 = require("argon2-wasm-pro");
 
 // const edPro = require("ed25519-wasm-pro");
 const ed25519 = require("ed25519.js");
